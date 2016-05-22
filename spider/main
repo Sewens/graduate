@@ -7,6 +7,8 @@ import webbrowser
 import time
 import random
 from user_agents import agents
+import os
+
 
 url_base = 'http://weibo.cn/'
 
@@ -157,7 +159,22 @@ def _search_rst_insert(dic):
     connection.close()
     return 0
 
+#设置最新的cookies值保证能够正常访问微博帐号
+def set_cookies():
+    print "请将当前登录微博帐号的Cookies填入打开的文本文件中，保存并退出以更新Cookies"
+    op = os.popen('notepad cookies.txt')
+    print '执行结果:'
+    for line in op:
+        print op
+    print "消息输出完毕"
+
+#该函数将全局变量cookies设置（更新）为用户填入文本文件中的最新的cookies值
+def get_cookies():
+    _file = open('cookies.txt','r')
+    cookies = _file.read()
+    _file.close()
+
+
 if __name__ == '__main__':
-    _spyder()
-  #  search()
+    set_cookies()
 
