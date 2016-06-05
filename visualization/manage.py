@@ -37,7 +37,6 @@ def freq_analysis(name):
     #pseg是jieba分析的词性标注分词器
     rst = pseg.cut(txt, 1)
     dic = {}
-    connection.close()
     for item, flag in rst:
         #ishan函数用于判定是否为汉语字符
         if ishan(item):
@@ -63,6 +62,14 @@ def freq_analysis(name):
         #print lable,rank
         ranking.append([lable, dic[lable]])
         dic.pop(lable)
+    query = "create table %s_freq (id int primary key auto_increment,word varchar(32),freq int)"% name
+    cursor.execute(query)
+    for item in ranking:
+        query = 'insert into %s_freq (word,freq) values (%s,%d)'%(name,item[0],item[1])
+        cursor.execute(query)
+    connection.commit()
+    connection.close()
+
     return ranking
 
 
@@ -156,4 +163,4 @@ def annual_freq_analysis(ranking,id_name):
 
 if __name__=="__main__":
     ranking = freq_analysis('kaifulee')
-    annual_freq_analysis(ranking,'kaifulee')
+    #annual_freq_analysis(ranking,'kaifulee')

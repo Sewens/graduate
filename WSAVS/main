@@ -1,18 +1,22 @@
 #coding:utf-8
 import random
-from search import *
-from cookies import *
-from user_agents import *
-from spyder import _spyder,refresh_random
-from search import _search_rst_insert ,_search_rst_fetch, _search
-from extract import txt_formate
+import Cookies
+import SqlSerise
+import Spyder
+import Search
+import Extract
+import UserState
 
 if __name__ == '__main__':
+    #几个表的初始化系统
+    UserState.Us_init()
+    SqlSerise.sql_create()
+    Search.Search_init()
 
-    set_cookies()
-    get_cookies()
-    _search_rst_insert(_search('林鸿飞'),'林鸿飞')
-    ret = _search_rst_fetch('林鸿飞')
-    _spyder(ret['name'],ret['url'])
 
-    txt_formate(ret['name'])
+    Cookies.set_cookies()
+    Cookies.get_cookies()
+    Search.Search_rst_insert(Search.Search('林鸿飞'),'林鸿飞')
+    ret = Search.Search_rst_fetch('林鸿飞')
+    Spyder.Spyder(ret['name'],ret['url'])
+

@@ -83,7 +83,7 @@ def draw_bar(name):
     except Exception, e:
         print '%s0 Exception!' % draw_bar.__name__
         print 'Exception:%s' % e
-    connection = MySQLdb.connect(host='localhost', user='root', passwd='root', db='test1', charset='utf8')
+    connection = MySQLdb.connect(host='localhost', user='root', passwd='root', db='test', charset='utf8')
     cursor = connection.cursor()
     query = "select * from %s"% name
     cursor.execute(query)
@@ -94,6 +94,7 @@ def draw_bar(name):
     lst_data = OrderedDict()
     lst_time = []
     lst_sentiment1 = []
+
     for item in cursor:
         if count>100:
             break
@@ -101,8 +102,10 @@ def draw_bar(name):
         #此处需要注意，在修改表结构之后数据可能紊乱 需要改动程序
         lst_sentiment1.append(item[3])
         lst_time.append(str(item[1]))
+
     lst_data['data'] = lst_sentiment1
     lst_data['days'] = lst_time
+
     print "complete"
     #上面都是数据准备的部分
 
@@ -123,4 +126,4 @@ def draw_bar(name):
     show(p)
 
 
-draw_bar('kaifulee')
+draw_bar('kaifulee1')

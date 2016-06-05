@@ -72,22 +72,23 @@ def commit_match(item):
 # 用来将爬虫爬取的有效内容提取出来
 
 
-
-def txt_formate(text,fname):
-    filename = "f:/%s.txt" % fname
+#还是原有的功能，用于打开本地的文件进行分析 最后返回一个lst 相应的需要带上用户的微博id信息
+def txt_formate(name):
+    name = name.encode('utf-8')
+    filename = "%s.txt" % name
     try:
         filename = unicode(filename, 'utf8')
     except Exception, e:
         print '%s0 Exception!' % txt_formate.__name__
         print 'Exception:%s' % e
-
-    huge_txt = text
-
+    _file = open(filename)
+    huge_txt = _file.read()
+    _file.close()
     lst = []
     #匹配微博用户发布的微博 区块标志为ctt
     pattern_ctt = re.compile('id=".+"><div><span class="ctt">.+</span>.+<span class="ct">.+</span>')
     for item in pattern_ctt.findall(huge_txt):
-        dic = {}
+        dic = {'name':name}
         cnt = ctt_match(item)
         dic['flag'] = 'ctt'
         dic['ident'] = ident_match(item)
@@ -112,61 +113,9 @@ def txt_formate(text,fname):
         dic['commit'] = commit_match(item)
         lst.append(dic)
     '''
-    sql_insert(lst,fname)
+    return lst
 
 
-#新建表以及插入所有被爬到的微博内容
-#lst参数为处理完毕的微博内容信息，fname为表名，实际上是搜索过程中获得的用户id信息
-def sql_insert(lst,fname):
-    fname=unicode(fname,'utf8')
-    create_query='create table %s (' \
-                 'id int primary key auto_increment,' \
-                 'flag varchar(16),' \
-                 'ident varchar(16) unique,' \
-                 'time datetime,' \
-                 'cnt text,' \
-                 'agree int,' \
-                 'trans int,' \
-                 'commit int,' \
-                 'sentiment1 float,' \
-                 'sentiment2 float)' % fname
-    connection = MySQLdb.connect(host='localhost',user='root',passwd='root',db='test',charset='utf8')
-    cursor = connection.cursor()
-    try :
-        cursor.execute(create_query)
-    except Exception,e:
-        print "%s table create Exception!"  % sql_insert.__name__
-        print "Exception:%s" % e
-
-    for item in lst:
-        item = dict(item)
-        item['cnt'] = item['cnt'].replace('\"','\'')
-        insert_query = 'insert into %s (' \
-                       'flag,' \
-                       'ident,' \
-                       'time,' \
-                       'cnt,' \
-                       'agree,' \
-                       'trans,' \
-                       'commit,' \
-                       'sentiment1,' \
-                       'sentiment2' \
-                       ') values' \
-                '("%s","%s","%s","%s",%d,%d,%d,0,0)'\
-                %(fname,item['flag'], item['ident'], item['time'], item['cnt'],int(item['agree']),int(item['trans']),int(item['commit']))
-        print insert_query
-        try:
-            cursor.execute(insert_query)
-        except Exception,e:
-            print "%s table insert Exception!" % sql_insert.__name__
-            print "Exception:%s" % e
-    query = 'alter table %s set sentiment1=-1'% fname
-    cursor.execute(query)
-    connection.commit()
-    connection.close()
-
-# sql_query()
-#txt_formate()
 '''
 if __name__=="__main__":
     analyser = SentimentAnalyzer.SentimentAnalyzer()
@@ -187,6 +136,5 @@ if __name__=="__main__":
     connection.close()
 '''
 
-if __name__=='__main__':
-    txt_formate('李开复')
+
 

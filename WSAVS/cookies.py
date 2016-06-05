@@ -1,6 +1,6 @@
 #coding:utf-8
 import os
-from user_agents import *
+from UserAgents import *
 import random
 
 url_base = 'http://weibo.cn'
