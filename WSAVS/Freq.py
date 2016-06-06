@@ -5,7 +5,7 @@ import MySQLdb
 import jieba.posseg as pseg
 
 
-noneed = [u'评论',u'微',u'图片',u'原图',u'博',u'全文', u'时',u'转发',u'事']
+stopwords = [u'评论',u'微',u'图片',u'原图',u'博',u'全文', u'时',u'转发',u'事',u'无法',u'时候',u'错误']
 
 
 def ishan(text):
@@ -57,7 +57,7 @@ def freq_analysis(name):
                 #之后在dic对象中搜索 词存在，则将当前年度对应的词频进行加一更新
                 #若词不存在 则执行初始化部分 新建一个内部dic对象 将属性名写入 数据初始化为0 表示各年度的数据值情况
                 if ishan(item):
-                    if item in noneed:
+                    if item in stopwords:
                         continue
                     if (flag == 'n' or flag == 'an'):
                         if item in dic:
@@ -78,7 +78,7 @@ def freq_analysis(name):
                     pass
     #选出前30热词
     ranking = []
-    for i in range(0, 100):
+    for i in range(0,30):
         rank = 0
         lable = ''
         for item in dic.keys():
@@ -96,11 +96,24 @@ def freq_analysis(name):
     connection.close()
     return ranking
 
+#删除指定用户下的结果
+def freq_flush(name):
+    print '初始化freq表清空组件.'
+    connection = MySQLdb.connect(host='localhost', user='root', passwd='root', db='test', charset='utf8')
+    cursor = connection.cursor()
+    query = 'delete from freq_rst where user_name="%s"'% name.decode('utf-8')
+    cursor.execute(query)
+    connection.commit()
+    print '清空过程完成.'
+    connection.close()
+
 #配合freq_analysis函数使用的函数 主要功能在于将rank值插入rank为一个list对象，list中包含list
 #子list中第一个元素为单词 第二个元素为一个包含着各个年度的词频率信息
+#插入函数 首先执行删除操作 之后再进行插入
 def freq_insert(rank,name):
     connection = MySQLdb.connect(host='localhost', user='root', passwd='root', db='test', charset='utf8')
     cursor = connection.cursor()
+    freq_flush(name)
     count = 0
     for item in rank:
         count += 1

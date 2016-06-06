@@ -7,14 +7,17 @@ from SentimentAnalyzer import *
 #name字段主要用于在表content中查询指定的用户的微博进行修改
 #同属于sql系列的函数
 def sql_sntianaly(name):
+    print '初始化分析器.'
     analyzer = SentimentAnalyzer()
     analyzer.load()
+    print '建立连接.'
     connection = MySQLdb.Connect(host='localhost',user='root',passwd='root',db='test',charset='utf8')
     cursor = connection.cursor()
     query = 'select * from cnt_spyder where name="%s"' % name
     cursor.execute(query)
     rst_query = cursor.fetchall()
     count = 0
+    print '开始进行情感分析.'
     for item in rst_query:
         count += 1
         txt_tweet = item[4]
@@ -56,9 +59,11 @@ def sql_create():
 
 #插入指定内容 内容由lst传入 lst传入一次处理得到的所有单条微博信息
 def sql_insert(lst):
+    print '建立连接.'
     connection = MySQLdb.connect(host='localhost', user='root', passwd='root', db='test', charset='utf8')
     cursor = connection.cursor()
     count = 0
+    print '连接完成.'
     for item in lst:
         count += 1
         item = dict(item)

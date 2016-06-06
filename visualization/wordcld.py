@@ -4,7 +4,6 @@ from scipy.misc import imread
 import matplotlib.pyplot as plt
 from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
 import MySQLdb
-import manage
 
 if __name__=="__main__":
     ranking = manage.freq_analysis('kaifulee')

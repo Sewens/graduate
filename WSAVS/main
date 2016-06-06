@@ -28,5 +28,6 @@ if __name__ == '__main__':
 '''
     #lst = Extract.Extract('李开复')
     #SqlSerise.sql_insert(lst)
+    #SqlSerise.sql_sntianaly('李开复')
     rank = Freq.freq_analysis('李开复')
     Freq.freq_insert(rank,'李开复')
