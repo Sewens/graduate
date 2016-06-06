@@ -19,14 +19,10 @@ def ishan(text):
 #参数依然是目标微博用户的id
 def freq_analysis(name):
     #这部分是对文件名进行处理的函数，对不同情形下文件名处理 保证不会发生编码问题
-    try:
-        filename = unicode(name, 'utf8')
-    except Exception, e:
-        print '%s0 Exception!' % freq_analysis.__name__
-        print 'Exception:%s' % e
+
     connection = MySQLdb.connect(host='localhost', user='root', passwd='root', db='test1', charset='utf8')
     cursor = connection.cursor()
-    query = "select * from %s"%name
+    query = 'select * from cnt_spyder where name="%s"'% name
     cursor.execute(query)
     cursor.fetchall()
     txt = []
@@ -61,24 +57,34 @@ def freq_analysis(name):
         #print lable,rank
         ranking.append([lable, dic[lable]])
         dic.pop(lable)
-    query = "create table %s_freq (id int primary key auto_increment,word varchar(32),freq int)"% name
-    cursor.execute(query)
-    for item in ranking:
-        query = 'insert into %s_freq (word,freq) values (%s,%d)'%(name,item[0],item[1])
-        cursor.execute(query)
     connection.commit()
     connection.close()
-
     return ranking
-#用于将表更新 计算各年中各词频率之和
 
+
+#用于将表更新 计算各年中各词频率之和
+#用于将总词频数进行计算
+def freq_update():
+    connection = MySQLdb.Connect(host='localhost', user='root', passwd='root', db='test1', charset='utf8')
+    cursor = connection.cursor()
+    query = 'select * from freq_rst'
+    cursor.execute(query)
+    rst_select = cursor.fetchall()
+    count = 0
+    for item in rst_select:
+        count +=1
+        freq_sum = item[2]+item[3]+item[4]+item[5]+item[6]+item[7]+item[8]+item[9]
+        query = 'update freq_rst set freq_sum=%d where id=%d'%(freq_sum,item[0])
+        cursor.execute(query)
+        print '更新第%d条完毕！'% count
 
 #用于建表 内含各年度词频数据
 def freq_init():
     connection = MySQLdb.Connect(host='localhost', user='root', passwd='root', db='test1', charset='utf8')
     cursor = connection.cursor()
     # 此处开始是各年度的词汇频率统计处理部分
-    query = 'create table freq_rst (id int primary key auto_increment,' \
+    query = 'create table freq_rst (' \
+            'id int primary key auto_increment,' \
             'word varchar(64) unique,' \
             'freq09 int default 0,' \
             'freq10 int default 0,' \

@@ -1,7 +1,5 @@
 # coding:utf-8
 import re
-import MySQLdb
-import SentimentAnalyzer
 
 
 # 用来进行两种格式的日期的匹配
@@ -12,7 +10,6 @@ def time_match(item):
     if len(time) != 0:
         rt_time = '2016-%s-%s %s:00' % (time[0][0], time[0][1], time[0][2])
         return rt_time
-
     else:
         time = pattern_time1.findall(item)
         if len(time) != 0:
@@ -73,13 +70,12 @@ def commit_match(item):
 
 
 #还是原有的功能，用于打开本地的文件进行分析 最后返回一个lst 相应的需要带上用户的微博id信息
-def txt_formate(name):
-    name = name.encode('utf-8')
+def Extract(name):
     filename = "%s.txt" % name
     try:
         filename = unicode(filename, 'utf8')
     except Exception, e:
-        print '%s0 Exception!' % txt_formate.__name__
+        print '%s0 Exception!' % Extract.__name__
         print 'Exception:%s' % e
     _file = open(filename)
     huge_txt = _file.read()

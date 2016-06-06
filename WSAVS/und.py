@@ -1,11 +1,18 @@
 #coding:utf-8
-def hanshu(name):
-    print name.encode('utf-8')
-    print 'name:' + name
+import Extract
 
 
-str = '中文'
-ustr = u'中文'
-inpu = raw_input('input chinese')
-hanshu(inpu.decode('utf-8'))
+lst = Extract.Extract('林鸿飞')
+count = 1
+for item in lst:
+    if count>10:
+        break
+    print item['name'],type(item['name']),len(item['name'])
+    print item['name'],isinstance(item['name'],str),item['name'].decode('utf-8'),type(item['name'].decode('utf-8'))
+
+    p = '("%s", "%s", "%s", "%s", %d, %d, %d, 0, 0, % s)'% \
+        (item['flag'], item['ident'], item['time'], item['cnt'], int(item['agree']), int(item['trans']),
+       int(item['commit']),item['name'].decode('utf-8'))
+    print p
+
 

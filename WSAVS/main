@@ -4,13 +4,18 @@ import Cookies
 import SqlSerise
 import Spyder
 import Search
-import Extract
+import Freq
 import UserState
+#先写几点约束
+#程序中所有涉及到用户名称的部分都用 查询时候的用户名称为准 即 李开复 吴军 等 关键词 避免发生字符串混乱等意外情况
 
 if __name__ == '__main__':
+    SqlSerise.sql_create()
+    Freq.freq_init()
+    '''
     #几个表的初始化系统
     UserState.Us_init()
-    SqlSerise.sql_create()
+
     Search.Search_init()
 
 
@@ -19,4 +24,7 @@ if __name__ == '__main__':
     Search.Search_rst_insert(Search.Search('林鸿飞'),'林鸿飞')
     ret = Search.Search_rst_fetch('林鸿飞')
     Spyder.Spyder(ret['name'],ret['url'])
-
+'''
+    #lst = Extract.Extract('林鸿飞')
+    #SqlSerise.sql_insert(lst)
+    SqlSerise.sql_sntianaly('林鸿飞')

@@ -7,24 +7,22 @@ from SentimentAnalyzer import *
 #name字段主要用于在表content中查询指定的用户的微博进行修改
 #同属于sql系列的函数
 def sql_sntianaly(name):
-    try:
-        name = unicode(name, 'utf8')
-    except Exception, e:
-        print '%s0 Exception!' % sql_sntianaly.__name__
-        print 'Exception:%s' % e
     analyzer = SentimentAnalyzer()
     analyzer.load()
-
     connection = MySQLdb.Connect(host='localhost',user='root',passwd='root',db='test',charset='utf8')
     cursor = connection.cursor()
-    query = 'select * from %s where sentiment1=-127' % name
-    rst_query = cursor.execute(query)
-
+    query = 'select * from cnt_spyder where name="%s"' % name
+    cursor.execute(query)
+    rst_query = cursor.fetchall()
+    count = 0
     for item in rst_query:
+        count += 1
         txt_tweet = item[4]
         rst_float = analyzer.analyze(txt_tweet)
-        query = 'update table %s set sentiment1=%f' % (name,rst_float)
+        print "正在分析第:%d条，情感结果:%f." % (count,rst_float)
+        query = 'update cnt_spyder set sentiment1=%f where id=%d' % (rst_float,item[0])
         cursor.execute(query)
+    print '分析完毕！'
     connection.commit()
     connection.close()
 
@@ -37,11 +35,11 @@ def sql_create():
                    'id int primary key auto_increment,' \
                    'flag varchar(16),' \
                    'ident varchar(16) unique,' \
-                   'time datetime,' \
+                   'date_time datetime,' \
                    'cnt text,' \
                    'agree int,' \
                    'trans int,' \
-                   'commit int,' \
+                   'comment int,' \
                    'sentiment1 float default -127,' \
                    'sentiment2 float default -127,' \
                    'name varchar(32))'
@@ -66,16 +64,14 @@ def sql_insert(lst):
         insert_query = 'insert into cnt_spyder (' \
                        'flag,' \
                        'ident,' \
-                       'time,' \
+                       'date_time,' \
                        'cnt,' \
                        'agree,' \
                        'trans,' \
-                       'commit,' \
-                       'sentiment1,' \
-                       'sentiment2' \
+                       'comment,' \
                        'name) values' \
-                '("%s","%s","%s","%s",%d,%d,%d,0,0,%s)'\
-        % (item['flag'], item['ident'], item['time'], unicode(item['cnt']),int(item['agree']),int(item['trans']),int(item['commit']),unicode(item['name']))
+                '("%s","%s","%s","%s",%d,%d,%d,"%s")'\
+        % (item['flag'], item['ident'], item['time'],item['cnt'],int(item['agree']),int(item['trans']),int(item['commit']),item['name'].decode('utf-8'))
         print insert_query
         try:
             cursor.execute(insert_query)
