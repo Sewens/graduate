@@ -58,7 +58,9 @@ def sql_create():
 def sql_insert(lst):
     connection = MySQLdb.connect(host='localhost', user='root', passwd='root', db='test', charset='utf8')
     cursor = connection.cursor()
+    count = 0
     for item in lst:
+        count += 1
         item = dict(item)
         item['cnt'] = item['cnt'].replace('\"','\'')
         insert_query = 'insert into cnt_spyder (' \
@@ -72,9 +74,10 @@ def sql_insert(lst):
                        'name) values' \
                 '("%s","%s","%s","%s",%d,%d,%d,"%s")'\
         % (item['flag'], item['ident'], item['time'],item['cnt'],int(item['agree']),int(item['trans']),int(item['commit']),item['name'].decode('utf-8'))
-        print insert_query
+        #print insert_query
         try:
             cursor.execute(insert_query)
+            print '插入第%d条，完成！'
         except Exception,e:
             print "%s table insert Exception!" % sql_insert.__name__
             print "Exception:%s" % e
