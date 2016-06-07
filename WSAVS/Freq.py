@@ -5,7 +5,7 @@ import MySQLdb
 import jieba.posseg as pseg
 
 
-stopwords = [u'评论',u'微',u'图片',u'原图',u'博',u'全文', u'时',u'转发',u'事',u'无法',u'时候',u'错误']
+stopwords = [u'评论',u'微',u'图片',u'原图',u'博',u'全文', u'时',u'转发',u'事',u'无法',u'时候',u'错误',u'原文']
 
 
 def ishan(text):

@@ -7,9 +7,13 @@ from bokeh.charts import Bar, output_file, show,HeatMap
 from os import path
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
+import pandas
+#这个是热度图的着色信息
+import bokeh.palettes
+
 
 #绘图前的数据准备 返回一个dic对象
-def draw_data_pre(name):
+def draw_bar_data_pre(name):
     try:
         name = unicode(name, 'utf8')
     except Exception, e:
@@ -57,7 +61,7 @@ def draw_data_pre(name):
 
 #通过数据处理子函数得到数据之后绘制柱状图
 def draw_rect_man(name):
-    lst_data = draw_data_pre(name)
+    lst_data = draw_bar_data_pre(name)
     print '绘制模块初始化.'
     source = ColumnDataSource(lst_data)
     TOOLS = "pan,wheel_zoom,,reset,hover,save"
@@ -140,11 +144,11 @@ def draw_word_cloud(name):
 
 
 def draw_rect(name):
-    lst = draw_data_pre(name)
+    lst = draw_bar_data_pre(name)
     lst['sentiment2'] = []
     for item in lst['sentiment1']:
         lst['sentiment2'].append(item/2)
-    TOOLS = "pan,wheel_zoom,,reset,hover,save"
+    TOOLS = "pan,wheel_zoom,hover,save"
     Tools = [TOOLS, 'resize', 'reset', 'crosshair']
     source = ColumnDataSource(lst)
     output_file('hasasdap.html')
@@ -177,9 +181,54 @@ def draw_rect(name):
                 """
     show(p)
 
+def draw_heatmap_data_pre(name):
+    connection = MySQLdb.connect(host='localhost', user='root', passwd='root', db='test', charset='utf8')
+    cursor = connection.cursor()
+    query = 'select * from freq_rst where user_name ="%s"' % name
+    cursor.execute(query)
+    rst_search = cursor.fetchall()
+    dic={'word':[],'year':[],'freq':[]}
+    for item in rst_search:
+        for i in range(9,17):
+            dic['word'].append(item[1])
+            dic['year'].append(2000+i)
+            dic['freq'].append(int(item[i-7]))
+    frame = pandas.DataFrame(dic)
+    return frame
+
 def draw_heatmap(name):
-    lst = draw_data_pre(name)
-    source = ColumnDataSource(lst)
+    frame = draw_heatmap_data_pre(name)
     output_file("cat_heatmap.html")
-    hm = HeatMap(source, title="categorical heatmap", width=800)
+    hover = HoverTool(
+        tooltips=[
+            ('Word',"@word"),
+            ("Freq:", "@freq"),
+        ]
+    )
+    Tools = ['wheel_zoom','save',hover, 'resize', 'reset', 'crosshair']
+    hm = HeatMap(data = frame,x='word',y='year',values = 'freq',
+                 height = 720, width = 1080,stat = None,tools=Tools)
+    hm.title = '%s微博09-16年主题词热度图' %name
     show(hm)
+
+'''
+#两种不同的数据准备格式
+def draw_heatmap_data_2(name):
+    connection = MySQLdb.connect(host='localhost', user='root', passwd='root', db='test', charset='utf8')
+    cursor = connection.cursor()
+    query = 'select * from freq_rst where user_name ="%s"' % name
+    cursor.execute(query)
+    rst_search = cursor.fetchall()
+    dic = {}
+    for i in range(9, 17):
+        dic[str(2000 + i)] = []
+    columns = []
+    index = [2009,2010,2011,2012,2013,2014,2015,2016]
+    for item in rst_search:
+        columns.append(item[1])
+        for i in range(9,17):
+            dic[str(2000+i)].append(item[i-7])
+    frame = pandas.DataFrame(dic, index = columns)
+    frame.columns.name = 'year'
+    return frame
+'''
