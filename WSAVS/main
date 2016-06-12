@@ -7,27 +7,33 @@ import Search
 import Extract
 import Freq
 import UserState
+import Draw
 #先写几点约束
 #程序中所有涉及到用户名称的部分都用 查询时候的用户名称为准 即 李开复 吴军 等 关键词 避免发生字符串混乱等意外情况
 
 if __name__ == '__main__':
-    #SqlSerise.sql_create()
-    #Freq.freq_init()
     '''
     #几个表的初始化系统
-    UserState.Us_init()
-
+    Freq.freq_init()
+    SqlSerise.sql_create()
+    UserState.us_init()
     Search.Search_init()
-
 
     Cookies.set_cookies()
     Cookies.get_cookies()
+
+
     Search.Search_rst_insert(Search.Search('林鸿飞'),'林鸿飞')
+    UserState.us_update('林鸿飞','search')
+
     ret = Search.Search_rst_fetch('林鸿飞')
     Spyder.Spyder(ret['name'],ret['url'])
 '''
     #lst = Extract.Extract('李开复')
     #SqlSerise.sql_insert(lst)
-    #SqlSerise.sql_sntianaly('李开复')
-    rank = Freq.freq_analysis('李开复')
-    Freq.freq_insert(rank,'李开复')
+    #SqlSerise.sql_sntianaly('林鸿飞')
+    #rank = Freq.freq_analysis('林鸿飞')
+    #Freq.freq_insert(rank,'林鸿飞')
+    Draw.draw_rect('吴军')
+    Draw.draw_heatmap('林鸿飞')
+    Draw.draw_word_cloud('林鸿飞')

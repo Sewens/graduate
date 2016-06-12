@@ -23,7 +23,10 @@ def draw_bar_data_pre(name):
     cursor = connection.cursor()
     query = 'select * from cnt_spyder where name ="%s"' % name
     cursor.execute(query)
-    cursor.fetchall()
+    rst_search = cursor.fetchall()
+    if len(rst_search)== 0:
+        print '无数据结果！'
+        exit(0)
     print "开始数据准备."
     count = 0
     lst_data = {}
@@ -36,10 +39,8 @@ def draw_bar_data_pre(name):
     lst_data['sentiment1'] = []
     lst_data['img'] = []
     lst_data['state'] = []
-    for item in cursor:
+    for item in rst_search:
         count += 1
-        if count>10:
-            break
         lst_data['id'].append(count)
         lst_data['date_time'].append(str(item[3]))
         lst_data['cnt'].append(item[4])
@@ -48,10 +49,10 @@ def draw_bar_data_pre(name):
         lst_data['comment'].append(int(item[7]))
         lst_data['sentiment1'].append(float(item[8]))
         if float(item[8]) > 0:
-            lst_data['img'].append('happy.jpg')
+            lst_data['img'].append('happy.gif')
             lst_data['state'].append('开心')
         elif float(item[8]) < 0:
-            lst_data['img'].append('sad.jpg')
+            lst_data['img'].append('sad.gif')
             lst_data['state'].append('难过')
         else:
             lst_data['img'].append('keguan.jpg')
@@ -151,15 +152,15 @@ def draw_rect(name):
     TOOLS = "pan,wheel_zoom,hover,save"
     Tools = [TOOLS, 'resize', 'reset', 'crosshair']
     source = ColumnDataSource(lst)
-    output_file('hasasdap.html')
-    p = figure(plot_width=1080, plot_height=720, tools=Tools)
+    output_file('sentiment.html')
+    p = figure(plot_width=1280, plot_height=720, tools=Tools)
     p.title = u'%s微博分析结果' % name.decode('utf8')
     p.xaxis.axis_label = '序号'
     p.yaxis.axis_label = '情感值'
-    p.ygrid.band_fill_color = "olive"
+    p.ygrid.band_fill_color = "black"
     p.ygrid.band_fill_alpha = 0.1
     p.rect("id", "sentiment2",0.5, "sentiment1", source=source,
-           color="#00ccff", line_color='#ffffff')
+           color="#00ccff", line_color='#00ccff')
     hover = p.select_one(HoverTool)
     hover.point_policy = "follow_mouse"
     hover.tooltips = """
@@ -180,6 +181,7 @@ def draw_rect(name):
                 </div>
                 """
     show(p)
+    print '绘制结束'
 
 def draw_heatmap_data_pre(name):
     connection = MySQLdb.connect(host='localhost', user='root', passwd='root', db='test', charset='utf8')
@@ -207,7 +209,7 @@ def draw_heatmap(name):
     )
     Tools = ['wheel_zoom','save',hover, 'resize', 'reset', 'crosshair']
     hm = HeatMap(data = frame,x='word',y='year',values = 'freq',
-                 height = 720, width = 1080,stat = None,tools=Tools)
+                 height = 720, width = 1280,stat = None,tools=Tools)
     hm.title = '%s微博09-16年主题词热度图' %name
     show(hm)
 

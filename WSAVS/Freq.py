@@ -5,7 +5,8 @@ import MySQLdb
 import jieba.posseg as pseg
 
 
-stopwords = [u'评论',u'微',u'图片',u'原图',u'博',u'全文', u'时',u'转发',u'事',u'无法',u'时候',u'错误',u'原文']
+stopwords = [u'评论',u'微',u'图片',u'原图',u'博',u'全文', u'时',u'转发',u'事',u'无法',u'时候',u'错误',u'原文'
+    ,u'客户端',u'有点',u'地方']
 
 
 def ishan(text):
@@ -131,6 +132,7 @@ def freq_insert(rank,name):
             'freq_sum,' \
             'user_name) values' \
             '("%s",%d,%d,%d,%d,%d,%d,%d,%d,%d,"%s")' % (item[0],dic['09'],dic['10'],dic['11'],dic['12'],dic['13'],dic['14'],dic['15'],dic['16'],dic['sum'],name.decode('utf8'))
+        print query
         cursor.execute(query)
         print '插入第%d条词段.' % count
     print '插入完成！'
@@ -160,7 +162,7 @@ def freq_init():
     # 此处开始是各年度的词汇频率统计处理部分
     query = 'create table freq_rst (' \
             'id int primary key auto_increment,' \
-            'word varchar(64) unique,' \
+            'word varchar(64),' \
             'freq09 int default 0,' \
             'freq10 int default 0,' \
             'freq11 int default 0,' \
