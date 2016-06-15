@@ -2,12 +2,8 @@
 import urllib2
 import re
 import time
-import random
-from UserAgents import agents
 import subprocess
 from Cookies import *
-import Extract
-
 
 
 def find_startnumber(filename):
@@ -40,7 +36,7 @@ def find_startnumber(filename):
 #传入的dic对象中有指定微博的博主姓名 微博主页的url 通过这两个参数进行url的访问以及本地文本文件的创建
 def Spyder (name,url):
     name = name.encode('utf8')
-    filename = "%s.txt" % name
+    filename = "output\%s.txt" % name
     try:
         filename = unicode(filename,'utf8')
     except Exception,e:

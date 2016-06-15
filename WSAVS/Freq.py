@@ -1,12 +1,10 @@
 #coding:utf-8
-from bokeh.charts.utils import df_from_json
-from bokeh.charts import HeatMap, output_file, show
 import MySQLdb
 import jieba.posseg as pseg
 
 
 stopwords = [u'评论',u'微',u'图片',u'原图',u'博',u'全文', u'时',u'转发',u'事',u'无法',u'时候',u'错误',u'原文'
-    ,u'客户端',u'有点',u'地方']
+    ,u'客户端',u'有点',u'地方',u'话',u'化',u'版式',u'人',u'浏览器',u'首歌']
 
 
 def ishan(text):
@@ -102,7 +100,7 @@ def freq_flush(name):
     print '初始化freq表清空组件.'
     connection = MySQLdb.connect(host='localhost', user='root', passwd='root', db='test', charset='utf8')
     cursor = connection.cursor()
-    query = 'delete from freq_rst where user_name="%s"'% name.decode('utf-8')
+    query = 'delete from freq_rst where user_name="%s"'% name
     cursor.execute(query)
     connection.commit()
     print '清空过程完成.'
@@ -112,6 +110,11 @@ def freq_flush(name):
 #子list中第一个元素为单词 第二个元素为一个包含着各个年度的词频率信息
 #插入函数 首先执行删除操作 之后再进行插入
 def freq_insert(rank,name):
+    try:
+        name = name.decode('utf8')
+    except:
+        pass
+
     connection = MySQLdb.connect(host='localhost', user='root', passwd='root', db='test', charset='utf8')
     cursor = connection.cursor()
     freq_flush(name)
@@ -131,7 +134,7 @@ def freq_insert(rank,name):
             'freq16,' \
             'freq_sum,' \
             'user_name) values' \
-            '("%s",%d,%d,%d,%d,%d,%d,%d,%d,%d,"%s")' % (item[0],dic['09'],dic['10'],dic['11'],dic['12'],dic['13'],dic['14'],dic['15'],dic['16'],dic['sum'],name.decode('utf8'))
+            '("%s",%d,%d,%d,%d,%d,%d,%d,%d,%d,"%s")' % (item[0],dic['09'],dic['10'],dic['11'],dic['12'],dic['13'],dic['14'],dic['15'],dic['16'],dic['sum'],name)
         print query
         cursor.execute(query)
         print '插入第%d条词段.' % count

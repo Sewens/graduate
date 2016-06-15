@@ -3,10 +3,7 @@ import urllib
 import urllib2
 import re
 import MySQLdb
-import webbrowser
 import time
-import random
-from UserAgents import agents
 from Cookies import *
 
 
@@ -108,6 +105,7 @@ def Search_rst_insert(dic,key_word):
     return 0
 
 #从数据库中取出插入完毕后的模块
+#这个模块兼有进行结果确认的部分
 #name为用户当初搜索时所用的字符串，这一对象被用来区分搜索结果
 def Search_rst_fetch(name):
     connect = MySQLdb.Connect(host='localhost', user='root', passwd='root', db='test',charset='utf8')
@@ -128,11 +126,11 @@ def Search_rst_fetch(name):
             print "No.%d: Name:%s \tLocation:%s \tUrl:%s"%(count ,dic['name'],dic['loc'],dic['url'])
             retn.append(dic)
         while 1:
-            order = input('Choose a user to start:')
+            order = input('选择您想要分析的微博用户:')
             if order < count+1 and order >0:
                 break
             else:
-                print "Wrong number!"
+                print "输入错误,请再次尝试."
 
     except Exception,e:
         print '%s Exception!' % Search_rst_fetch.__name__

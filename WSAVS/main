@@ -8,32 +8,62 @@ import Extract
 import Freq
 import UserState
 import Draw
+import History
 #先写几点约束
 #程序中所有涉及到用户名称的部分都用 查询时候的用户名称为准 即 李开复 吴军 等 关键词 避免发生字符串混乱等意外情况
 
+
+#完全自动化的一个过程 开始了就会执行到底
+def new_start():
+    Cookies.set_cookies()
+    Cookies.get_cookies()
+    user_keyword = ''
+    user_keyword = raw_input("请输入要查询的关键字,注意之后的所有过程均自动化进行,直到结果产生:")
+    Search.Search_rst_insert(Search.Search(user_keyword), user_keyword)
+    ret = Search.Search_rst_fetch(user_keyword)
+    UserState.us_update(user_keyword, 'search')
+    Spyder.Spyder(ret['name'], ret['url'])
+    UserState.us_create(user_keyword, ret['name'])
+    lst = Extract.Extract(ret['name'])
+    SqlSerise.sql_insert(lst)
+    UserState.us_update(ret['name'],'spyder')
+    rank = Freq.freq_analysis(ret['name'])
+    Freq.freq_insert(rank,ret['name'])
+    UserState.us_update(ret['name'], 'freq')
+    SqlSerise.sql_sntianaly(ret['name'])
+    UserState.us_update(ret['name'],'analysis')
+    Draw.draw_rect(ret['name'])
+    Draw.draw_heatmap(ret['name'])
+    Draw.draw_word_cloud(ret['name'])
+    UserState.us_update(ret['name'], 'visual')
+
+
 if __name__ == '__main__':
-    '''
-    #几个表的初始化系统
+    print "进入系统,开始系统初始化."
     Freq.freq_init()
     SqlSerise.sql_create()
     UserState.us_init()
     Search.Search_init()
+    print "系统初始化完成."
 
-    Cookies.set_cookies()
-    Cookies.get_cookies()
-
-
-    Search.Search_rst_insert(Search.Search('林鸿飞'),'林鸿飞')
-    UserState.us_update('林鸿飞','search')
-
-    ret = Search.Search_rst_fetch('林鸿飞')
-    Spyder.Spyder(ret['name'],ret['url'])
-'''
-    #lst = Extract.Extract('李开复')
-    #SqlSerise.sql_insert(lst)
-    #SqlSerise.sql_sntianaly('林鸿飞')
-    #rank = Freq.freq_analysis('林鸿飞')
-    #Freq.freq_insert(rank,'林鸿飞')
-    Draw.draw_rect('吴军')
-    Draw.draw_heatmap('林鸿飞')
-    Draw.draw_word_cloud('林鸿飞')
+    while 1:
+        print "1.新的开始."
+        print "2.旧的回忆."
+        print "0.隐退江湖."
+        order = input('请进行功能选择:')
+        if order < 3 and order >= 0:
+            if order==1:
+                new_start()
+            elif order==2:
+                print "请选择要查询的现有结果."
+                rnt = History.hist_show()
+                print "开始进行输出了哦."
+                Draw.draw_rect(rnt['user_id'])
+                Draw.draw_heatmap(rnt['user_id'])
+                Draw.draw_word_cloud(rnt['user_id'])
+                print "结果输出完毕,返回主界面."
+            else:
+                print "后会有期!"
+                exit(0)
+        else:
+            print "输入错误,请再次尝试."

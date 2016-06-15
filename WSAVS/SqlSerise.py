@@ -78,11 +78,11 @@ def sql_insert(lst):
                        'comment,' \
                        'name) values' \
                 '("%s","%s","%s","%s",%d,%d,%d,"%s")'\
-        % (item['flag'], item['ident'], item['time'],item['cnt'],int(item['agree']),int(item['trans']),int(item['commit']),item['name'].decode('utf-8'))
+        % (item['flag'], item['ident'], item['time'],item['cnt'],int(item['agree']),int(item['trans']),int(item['commit']),item['name'])
         #print insert_query
         try:
             cursor.execute(insert_query)
-            print '插入第%d条，完成！'
+            print '插入第%d条，完成！'%count
         except Exception,e:
             print "%s table insert Exception!" % sql_insert.__name__
             print "Exception:%s" % e

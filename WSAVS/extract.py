@@ -64,14 +64,10 @@ def commit_match(item):
         return 0
 
 
-
-
 # 用来将爬虫爬取的有效内容提取出来
-
-
 #还是原有的功能，用于打开本地的文件进行分析 最后返回一个lst 相应的需要带上用户的微博id信息
 def Extract(name):
-    filename = "%s.txt" % name
+    filename = "output\%s.txt" % name
     try:
         filename = unicode(filename, 'utf8')
     except Exception, e:
@@ -111,7 +107,7 @@ def Extract(name):
     '''
     return lst
 
-
+#测试用代码
 '''
 if __name__=="__main__":
     analyser = SentimentAnalyzer.SentimentAnalyzer()
